@@ -2,14 +2,10 @@ const express = require('express'); // importing a CommonJS module
 const helmet = require('helmet')
 const hubsRouter = require('./hubs/hubs-router.js');
 const morgan = require('morgan') // a way to capture useful information (the time is tooks to run and which request)
-
+const dateLogger = require('./api/dateLogger-middleware.js')
 const server = express();
 
-// three amigos
-// function dateLogger(req, res, next) {
-//   console.log(new Date().toISOString())
-//   next()
-// }
+
 
 function logger(req, res, next) {
   console.log(`The Logger [${new Date().toISOString()}] ${req.method} to ${req.url}`)
@@ -31,6 +27,17 @@ function gateKeeper(req, res, next) {
   }
   
 }
+
+function doubler(req, res, next) {
+  // everything coming from the url is a string
+
+  const number = Number(req.query.number || 0);
+
+  req.doubled = number * 2;
+
+  next();
+
+}
 // server.use('/', function (req, res, next) {
 //   console.log(res, req.originalUrl)
 //   next()
@@ -41,18 +48,14 @@ server.use(helmet()); //third party
 server.use(express.json()); // built in
 server.use(gateKeeper)
 // server.use(dateLogger) // custom middleware
-server.use('/api/hubs', hubsRouter);
+
 server.use(logger)
 server.use(morgan('dev'))
+server.use('/api/hubs', hubsRouter);
+server.use(doubler)
 
-
-server.get('/', (req, res) => {
-  const nameInsert = (req.name) ? ` ${req.name}` : '';
-
-  res.send(`
-    <h2>Lambda Hubs API</h2>
-    <p>Welcome${nameInsert} to the Lambda Hubs API</p>
-    `);
+server.get('/', doubler, (req, res) => {
+  res.status(200).json({number: req.doubled})
 });
 
 module.exports = server;
