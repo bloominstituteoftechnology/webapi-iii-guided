@@ -1,13 +1,28 @@
 const express = require('express'); // importing a CommonJS module
-
+const helmet = require('helmet'); // importing helmet security module
 const hubsRouter = require('./hubs/hubs-router.js');
 
 const server = express();
+function dateLogger(req, res, next){
+  console.log(new Date().toISOString());
+  next();
+  
+  }
+  function actionLogger(req, res, next){
+    console.log(req)
+    next();
+  }
+    
+    console.log(new Date().toISOString()){
+    next();
+    
+    }
 
+server.use(helmet)
 server.use(express.json());
-
 server.use('/api/hubs', hubsRouter);
-
+server.use(datelogger());
+server.use(actionLogger());
 server.get('/', (req, res) => {
   const nameInsert = (req.name) ? ` ${req.name}` : '';
 
