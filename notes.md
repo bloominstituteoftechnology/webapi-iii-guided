@@ -72,4 +72,47 @@ function practiceLogging (req, res, next){
 server.use(practiceLogging)
 
 
+## Ways of receiving data? 
+1. key-value store that looks like a JS object (req.query)
+     If you pass some headers into the JS client - you'll get a JS object and read the values off of there 
+2. body (only available if you have a POST or PUT - GET requests do not have a BODY!!!!)
+3. dynamic routes (URL parameters)
+4. headers
+
+
+
+## Middleware gateKeeper 
+function gateKeeper(req, res, next){
+     const password = req.headers.password || ''        <-- takes password header (or if its not there, an empty string)
+
+     if(password.toLowerCase() === 'mellon'){
+          next();
+     } else{
+          res.status(400).json({you: "cannot pass!!"})
+     }
+}
+* Why can't you read the password from the body?
+- Remember that the WEB is a layered system - those URL codes can be caught in someone's database in between
+- Passwords should not be a URL parameter or URL query string => Headers are a little more secure
+
+
+## Exercise: Change the gatekeeper to return a 400 if no password is provided + message that says please provide a password
+* if a password is provided (and it is mellon) call next -> otherwise return a 401 + you shall not pass message
+function gateKeeper(req, res, next){
+     if (req.headers.password){
+          if(req.headers.password === 'mellon'){
+               next();
+          } else{
+               res.status(401).json({you: 'you shall not pass'})
+          }
+     } else{
+          res.status(400).json({you: 'please provide a password'})
+     }
+}
+
+
+
+
+
+
 
