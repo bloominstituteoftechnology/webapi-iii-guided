@@ -34,7 +34,7 @@ server.use('/api/hubs', hubsRouter)
 const helment = require('helment')
 const server = express()
 server.use(helment())
-
+*** If we put gatekeeper before helmet, it won't stop someone from putting in the wrong password and being able to see we're using express!
 
 
 
@@ -81,6 +81,10 @@ server.use(practiceLogging)
 
 
 
+
+
+
+
 ## Middleware gateKeeper 
 function gateKeeper(req, res, next){
      const password = req.headers.password || ''        <-- takes password header (or if its not there, an empty string)
@@ -103,16 +107,56 @@ function gateKeeper(req, res, next){
           if(req.headers.password === 'mellon'){
                next();
           } else{
-               res.status(401).json({you: 'you shall not pass'})
+               res.status(401).json({message: 'you shall not pass'})
           }
      } else{
-          res.status(400).json({you: 'please provide a password'})
+          res.status(400).json({message: 'please provide a password'})
      }
 }
 
 
 
+## Creating a separate file for (exporting) Logger middleware functions 
+* File: dateLogger-middleware.js 
+
+function dateLogger(req,res,next){
+     console.log(new Date(). toISOString())
+     next();
+}
+
+
+## Creating a Middleware that adds something to a request 
+* Whatever value you give it - it will double that and so the next handler you give it will have access to this doubled number
+function doubler(req, res, next){
+     const number = req.query.number       <-- everything coming from the URL is a string!!! (even though it is a number, it will return as '1' a string) => therefore, we must parse its
+     const number = Number(req.query.number || 0);      <-- read number on query string via Number() -- (if not then it will be zero)>
+
+     req.doubled = number * 2;        <-- we >
+
+     next(); 
+}
+
+server.use(doubler)       <-- it is placed under the hubsRouter, therefore not global 
+
+** What if I just wanted it to run on a certain endpoint? (LOCALLY)
+- im going to use the doubler first - and then the endpoint Middleware
+server.get('/', doubler, (req, res) => {
+     res.status(200).json({number: req.doubled })                   <-- it will only apply LOCALLY to '/' endpoint and can be accessed via req.doubled (a key we created)
+})
+module.exports = server
+
+
+
+## testing
+localhost:4000/?number=8
+- should 
 
 
 
 
+## Middleware 
+* middleware accepts a parameter (normally aren't invoked)
+* to invoke it and make it functional..... bring in the prefix (parameter) and return using (req,res,next)
+****** therefore allowing you to read it from the outter scope - wrapping it in a function that returns a middleware
+
+a
