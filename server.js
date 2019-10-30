@@ -18,12 +18,12 @@ function gateKeeper(req, res, next) {
 	//new way of reading data sent by the client
 	const password = req.headers.password || '';
 
-	if (password.toLowerCase() === 'mellon') {
-		next();
-	} else if (password.toLowerCase === '') {
+	if (password.toLowerCase() === '') {
 		res.status(400).json({ message: 'please enter a password' });
+	} else if (password.toLowerCase() === 'mellon') {
+		next();
 	} else {
-		res.status(400).json({ you: 'Shall Not Pass' });
+		res.status(401).json({ you: 'Shall Not Pass' });
 	}
 }
 
