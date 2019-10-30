@@ -20,7 +20,7 @@ server.get('/', (req, res) => {
 
   res.send(`
     <h2>Lambda Hubs API</h2>
-    <p>Welcome${nameInsert} to the Lambda Hubs API</p>
+    <p>Welcome${nameInsert} to the Lambda Hub API</p>
     `);
 });
 
