@@ -63,6 +63,10 @@ server.use('/api/hubs', hubsRouter)     <--
 write a middleware function that logs the  HTTP method and the URL visited by the client
 should log to the console something that looks like this: GET / or GET /api/hubs
 
+function practiceLogging (req, res, next){
+     console.log(`${req.method} ${req.url}`)
+     next();
+}
 
 
 
