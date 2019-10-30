@@ -24,9 +24,8 @@ Everything (ish) is middleware!
 
 #### Remember that Middleware runs top to bottom (explicitly state function -> global middleware ->  )
 ## Global Middlewares
-server.use(helment())           -->     third party
+server.use(helment())           --> Third party
 server.use(express.json())      ---> Built-in
-
 ## Local middleware determined by specified Routes (URI) 
 server.use('/api/hubs', hubsRouter)
 
@@ -52,22 +51,25 @@ server.use(helment())                   <-- global middleware / third party
 server.use(express.json())              <-- global middleware / built-in
 server.use(dateLogger)                  * notice that the custom middleware function ISN'T BEING INVOKED (global middleware)
 
-server.use('/api/hubs', hubsRouter)     <-- 
+server.use('/api/hubs', hubsRouter)     <-- middleware restricted/activated only through the URI route
 
 
 
 
 
 
-## Write global middleware 
-write a middleware function that logs the  HTTP method and the URL visited by the client
-should log to the console something that looks like this: GET / or GET /api/hubs
+## Write a middleware function that logs the  HTTP method and the URL visited by the client
+* should log to the console something that looks like this: GET / or GET /api/hubs
+* Or you can just download ----> Morgan via `npm i morgan`
 
 function practiceLogging (req, res, next){
-     console.log(`${req.method} ${req.url}`)
+     console.log(
+          `The Logger: [${new Date().toISOString()}]
+          ${req.method} ${req.url}`
+     )
      next();
 }
-
+server.use(practiceLogging)
 
 
 
